@@ -20,10 +20,9 @@ loadSprite("player", "sprites/playersprite.png", {
     
 });
 loadSprite("emeraldNode", "sprites/emeraldNode.png");
-
 loadSprite("bgImg", "sprites/bgImg.png"); 
-
 loadSprite("firearrow", "sprites/firearrow.png");
+loadSprite("grasstile", "sprites/grasstile.png");
 
 scene("game", () => {
 
@@ -35,7 +34,43 @@ scene("game", () => {
         sprite("bgImg"),
         pos(0, -FLOOR_HEIGHT),
         scale(1),
+        fixed(),
     ]);
+
+    const level1 = [
+        "                                ",
+        "                                ",
+        "                                ",
+        "                                ",
+        "                                ",
+        "                                ",
+        "                                ",
+        "                                ",
+        "                                ",
+        "                                ",
+        "                                ",
+        "                                ",
+        "                                ",
+        "                                ",
+        "================================",
+    ];
+
+    const levelConf = {
+        tileWidth: TILE_SIZE,
+        tileHeight: TILE_SIZE,
+        tiles: {
+            "=": () => [
+                sprite("grasstile"),
+                area(),
+                body({isStatic: true}),
+                anchor("botleft"),
+                "floor",
+                scale(2),
+            ],
+        },
+    };
+
+    const level = addLevel(level1, levelConf);
 
     // add player to screen
     const player = add([
@@ -47,7 +82,16 @@ scene("game", () => {
         scale(0.25)
     ]);
 
-    // floor
+    // Camera follow player
+    player.onUpdate(() => {
+        camPos(player.pos.x, player.pos.y);
+        // Keep the camera in bounds
+        const camX = Math.max(0, Math.min(width(), player.pos.x));
+        const camY = Math.max(0, Math.min(height(), player.pos.y));
+        camPos(camX, camY);
+    })
+
+    /* floor
     add([
         rect(width(), FLOOR_HEIGHT),
         pos(0, height()),
@@ -58,6 +102,7 @@ scene("game", () => {
         z(1),
         color(50, 150, 133)
     ]);
+    */
 
     // define doublejump variable
     let doubleJumps = 0;
